@@ -34,6 +34,56 @@ def check_22(target):
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('run\n')
 
+def check_111(target):
+  print '    + loading : rpc modules'
+  print '      + sunrpc_portmapper'
+  saveNetRc('use auxiliary/scanner/misc/sunrpc_portmapper\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+def check_135(target):
+  saveNetRc('use exploit/windows/dcerpc/ms03_026_dcom\n')
+  saveNetRc('set RHOST ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use auxiliary/scanner/misc/sunrpc_portmapper\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use auxiliary/scanner/dcerpc/tcp_dcerpc_auditor\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use auxiliary/scanner/dcerpc/endpoint_mapper\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+
+def check_139(target):
+  saveNetRc('use auxiliary/scanner/netbios/nbname\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use auxiliary/scanner/smb/smb_enumshares\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use auxiliary/scanner/smb/smb_enumusers_domain\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use auxiliary/scanner/smb/smb_lookupsid\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use auxiliary/scanner/smb/pipe_auditor\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use auxiliary/scanner/smb/pipe_dcerpc_auditor\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
 
 def check_http(target, rport):
   print '    + loading : http modules ...'
@@ -295,6 +345,18 @@ def readScan(nmaplogfile):
         elif port.find('IIS') != -1:
           print '[i] Probably IIS; preparing...'
           check_iis(target, rport)
+
+      elif port.find('111/tcp') != -1:
+        print '[i] RPC found on port : ', rport
+        check_111(target)
+
+      elif port.find('135/tcp') != -1:
+        print '[i] NetBios found on port: ', rport
+        check_135(target)
+
+      elif port.find('139/tcp') != -1:
+        print '[i] SMB found on port: ', rport
+        check_139(target)
 
       elif port.find('443/tcp') != -1:
         print '[i] HTTPS found on port: ', rport
