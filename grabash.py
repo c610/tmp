@@ -70,7 +70,7 @@ def check_http(target, rport):
   saveNetRc('run\n')
 
   print '      + scrapper (get Title)'
-  saveNetRc('use use auxiliary/scanner/http/scraper\n')
+  saveNetRc('use auxiliary/scanner/http/scraper\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
@@ -95,7 +95,7 @@ def check_iis(target, rport):
 
 
 def check_joomla(target,rport):
-  print '    + loading : joomla modules ...'
+  print '    + loading : joomla modules, port : ', rport
   saveWWWRc('use auxiliary/scanner/http/joomla_version\n')
   saveWWWRc('set RHOSTS ' + target + '\n')
   saveWWWRc('set RPORT ' + rport + '\n')
@@ -125,6 +125,9 @@ def check_http_dirs(target):
       if line.find('/administrator/') != -1:
         print '  [+] probably Joomla; preparing tests...'
         check_joomla(target,rport)
+      elif line.find('/joomla/') != -1:
+        print '  [+] probably Joola; preparing tests...'
+        check_joomla(target, rport)
       elif line.find('.git') != -1:
         print '  [+] probably git found; preparing tests...'
         check_git(target, rport)
@@ -197,6 +200,37 @@ def check_5357(target):
 
 
 # code functions:
+def thanks():
+# :)
+  print '\n'
+  print '*'*80
+  print '\t\t(let\'s say...) summary:'
+  print '*'*80
+
+  fp1 = open(nmaplogfile, 'r')
+  s_ports = fp1.readlines()
+  s_i = 0
+  for p in s_ports:
+    if p.find('open') != -1:
+      s_i += 1
+      print p
+  print '[+] Ports:'
+  print '    Total: ', s_i
+  print ''
+
+  fp2 = open(wwwspool, 'r')
+  s_ports2 = fp2.readlines()
+  s_i2 = 0
+  for p2 in s_ports2:
+    if p2.find('Found http') != -1:
+      print 'Check link : ', p2
+
+  fp1.close()
+  fp2.close()
+
+      
+
+
 def elhost(): # for LHOST
   f = os.popen('/sbin/ifconfig eth0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
   lhost=f.read()
@@ -281,6 +315,7 @@ def readScan(nmaplogfile):
 
   saveNetRc('exit\n')
   saveWWWRc('exit\n')
+  rport = ''
   print '[i] Reding log file : done.'
 
 def scan(target):
@@ -358,7 +393,7 @@ def sayHi():
 # ...
 sayHi()
 prepareEnv()
-scan(target)
+#scan(target)
 
 readScan(nmaplogfile)
 runMsfScan(rcfile)
@@ -367,6 +402,7 @@ readSpool(rcspool)
 runMsfScan(rcwww)
 #readSpool(rcwww)
 
+thanks()
 # more:
 # http://code610.blogspot.com
 #
