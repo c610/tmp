@@ -180,6 +180,12 @@ def check_git(target, rport):
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
+def check_axis2(target,rport):
+  print '    + loading : axis2 modules...'
+  saveWWWRc('use auxiliary/scanner/http/axis2_lfi_ctf\n')
+  saveWWWRc('set RHOSTS ' + target + '\n')
+  saveWWWRc('set RPORT ' + rport + '\n')
+  saveWWWRc('run\n')
 
 def check_http_dirs(target): 
   fp = open(rcspool,'r') # read from msf.net output file
@@ -191,6 +197,9 @@ def check_http_dirs(target):
       if line.find('/administrator/') != -1:
         print '  [+] probably Joomla; preparing tests...'
         check_joomla(target,rport)
+      if line.find('/axis2/') != -1:
+        print '  [+] probably Axis2; preparing tests...'
+	check_axis2(target,rport)
       elif line.find('/joomla/') != -1:
         print '  [+] probably Joola; preparing tests...'
         check_joomla(target, rport)
@@ -485,4 +494,5 @@ thanks()
 # http://code610.blogspot.com
 #
 # cheers :)
+
 
