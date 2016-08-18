@@ -4,4 +4,6 @@ tmp files from tmp notes as tmp-pocs... ;)
 -----------------------------------------------------------------------------------
 
 18.08.2016:
-  - added check_21_ms() and few other small modifications
+  - added more modules for ssh
+  - added oracle (21/2100) modules
+  - other small modifications...
