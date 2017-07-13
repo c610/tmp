@@ -802,7 +802,7 @@ I found that the nag-screen presented on the beginning, is located here:
 0040E524  |. 8901           MOV DWORD PTR DS:[ECX],EAX
 
 I also found some other messages and info, for example:
-"0012FCB0   009F1A20   Ÿ.  ASCII "Coded by Teddy Rogers / SnD Team 2005"
+"0012FCB0   009F1A20   ÂŸ.  ASCII "Coded by Teddy Rogers / SnD Team 2005"
 
 
 I decided to change the default nag for the message from the address 0012FCB0.
@@ -833,7 +833,7 @@ Memory map, item 15
  Address=0046D000
  Size=0003D000 (249856.)
  Owner=UnPackMe 00400000
- Section=ÒuÛŠëÔ
+ Section=Ã’uÃ›ÂŠÃ«Ã”
  Contains=SFX,imports,resources
  Type=Imag 01001002
  Access=R
@@ -1829,5 +1829,5 @@ Links to some (IMO) cool resources you will find in the next section below.
 
 
 ===========================================================================
-by enlil from Nippur (nippurteam gmail com) 06/06/17
+by enlil from Nippur ( 06/06/17 )
 ===========================================================================
