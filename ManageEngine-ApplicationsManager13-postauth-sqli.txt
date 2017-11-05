@@ -1,0 +1,14 @@
+POST /manageApplications.do?method=insert HTTP/1.1
+Host: 192.168.1.190:9090
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:55.0) Gecko/20100101 Firefox/55.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,pl;q=0.7,en;q=0.3
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 407
+Referer: http://192.168.1.190:9090/admin/createapplication.do?method=createapp&grouptype=1
+Cookie: testcookie=; am_username=; am_check=; liveapm-_zldp=IEKA1hnqJESNNXc4I4Ts1omY%2FiCOo47Ch6sZEoC7bRr4SfuGTOVfjv2JZAH6cun8; liveapm-_zldt=cfa03604-1dc4-4155-86f7-803952114141; diagnosticsAlarmTable_sortdir=down; JSESSIONID_APM_9090=A16B99B2C0C09EB6060B4372660CFBC3
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+org.apache.struts.taglib.html.TOKEN=66ef9ed22c8b3a67da50e905f7735abd&addmonitors=0&name=My+App2&description=Description....This+service+is+critical+to+our+business&grouptype=1&mgtypestatus%231001=on&mgtypes_1001=1&mgtypes_1007=0&mgtypes_1008=0&mgtypestatus%231002=on&mgtypes_1002=1&mgtypestatus%231003=on&mgtypes_1003=1&mgtypestatus%231004=on&mgtypes_1004=1&mgtypestatus%231006=on&mgtypes_1006=1&locationid=
