@@ -1,0 +1,14 @@
+POST /GraphicalView.do HTTP/1.1
+Host: 192.168.1.191:9090
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:55.0) Gecko/20100101 Firefox/55.0
+Accept: application/json, text/javascript, */*; q=0.01
+Accept-Language: en-US,pl;q=0.7,en;q=0.3
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+X-Requested-With: XMLHttpRequest
+Referer: http://192.168.1.191:9090/showapplication.do?haid=10000106&method=showApplication&selectM=flashview&viewid=1
+Content-Length: 101
+Cookie: JSESSIONID_APM_9090=68C19C45D63C6FD102EB3DF25A8CE39D; testcookie=; am_username=; am_check=; am_mgview=availability
+Connection: close
+
+method=getLatestStatusForJIT&haid=10000106&viewid=1&currentime=1509869908111&resourceIDs=(0000106,0)
