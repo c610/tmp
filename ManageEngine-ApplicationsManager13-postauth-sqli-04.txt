@@ -1,0 +1,13 @@
+POST /manageApplications.do?method=AddSubGroup HTTP/1.1
+Host: 192.168.1.11:9090
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:55.0) Gecko/20100101 Firefox/55.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,pl;q=0.7,en;q=0.3
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 107
+Referer: http://192.168.1.191:9090/showapplication.do?haid=10000106&method=showApplication&selectM=flashview&viewid=1
+Cookie: JSESSIONID_APM_9090=A2E75AD13D8CD57A2E08C95FEA648AFA; testcookie=; am_username=; am_check=; liveapm-_zldp=IEKA1hnqJER%2BTdzLNmdAADV6XMIXKd1O11Ew1NGhDyS4TnWAjNVAe7EQS2b4IHgp; liveapm-_zldt=acc37da6-97d0-4dd3-a478-400639d6d4dc; selectedtab=1_1; selectedtabId=hometabConnection: close
+Upgrade-Insecure-Requests: 1
+
+haid=10000106&method=AddSubGroup&name=zzzzzzzzzzzzz&description=zzzzzzzzzzzzzzzzzzz&grouptype=1&locationid=

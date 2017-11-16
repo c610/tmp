@@ -1,0 +1,106 @@
+POST /manageConfMons.do HTTP/1.1
+Host: 192.168.1.11:9090
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:55.0) Gecko/20100101 Firefox/55.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,pl;q=0.7,en;q=0.3
+Accept-Encoding: gzip, deflate
+Content-Type: multipart/form-data; boundary=---------------------------103769957372
+Content-Length: 2360
+Referer: http://192.168.1.192:9090/adminAction.do?method=reloadHostDiscoveryForm&type=GlassFish&restype=GlassFish&haid=null
+Cookie: JSESSIONID_APM_9090=A2E75AD13D8CD57A2E08C95FEA648AFA; testcookie=; am_username=; am_check=; liveapm-_zldp=IEKA1hnqJER%2BTdzLNmdAADV6XMIXKd1O11Ew1NGhDyS4TnWAjNVAe7EQS2b4IHgp; liveapm-_zldt=acc37da6-97d0-4dd3-a478-400639d6d4dc; selectedtab=1_1; selectedtabId=hometabConnection: close
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+-----------------------------103769957372
+Content-Disposition: form-data; name="method"
+
+createMonitor
+-----------------------------103769957372
+Content-Disposition: form-data; name="addtoha"
+
+null
+-----------------------------103769957372
+Content-Disposition: form-data; name="resourceid"
+
+asd
+-----------------------------103769957372
+Content-Disposition: form-data; name="montype"
+
+GlassFish
+-----------------------------103769957372
+Content-Disposition: form-data; name="isAgentEnabled"
+
+NO
+-----------------------------103769957372
+Content-Disposition: form-data; name="resourcename"
+
+null
+-----------------------------103769957372
+Content-Disposition: form-data; name="isAgentAssociated"
+
+false
+-----------------------------103769957372
+Content-Disposition: form-data; name="hideFieldsForIT360"
+
+null
+-----------------------------103769957372
+Content-Disposition: form-data; name="type"
+
+GlassFish
+-----------------------------103769957372
+Content-Disposition: form-data; name="displayname"
+
+asd
+-----------------------------103769957372
+Content-Disposition: form-data; name="HostName"
+
+asd
+-----------------------------103769957372
+Content-Disposition: form-data; name="Port"
+
+21
+-----------------------------103769957372
+Content-Disposition: form-data; name="CredentialDetails"
+
+nocm
+-----------------------------103769957372
+Content-Disposition: form-data; name="cmValue"
+
+-1
+-----------------------------103769957372
+Content-Disposition: form-data; name="UserName"
+
+asd
+-----------------------------103769957372
+Content-Disposition: form-data; name="Password"
+
+asd
+-----------------------------103769957372
+Content-Disposition: form-data; name="JNDIPath"
+
+asd
+-----------------------------103769957372
+Content-Disposition: form-data; name="pollinterval"
+
+5
+-----------------------------103769957372
+Content-Disposition: form-data; name="monitorname"
+
+
+-----------------------------103769957372
+Content-Disposition: form-data; name="apdex"
+
+
+-----------------------------103769957372
+Content-Disposition: form-data; name="userid"
+
+
+-----------------------------103769957372
+Content-Disposition: form-data; name="password"
+
+
+-----------------------------103769957372
+Content-Disposition: form-data; name="groupname"
+
+
+-----------------------------103769957372--
