@@ -1,4 +1,4 @@
-c@kali:~/src/oscp$ cat minishare141-win7ultip0c-2.py
+c@kali:~/src/$ cat minishare141-win7ultip0c-2.py
 #!/usr/bin/env python
 import sys, socket
 
@@ -54,4 +54,4 @@ s.send(payload)
 s.close()
 
 
-c@kali:~/src/oscp$
+c@kali:~/src/$
