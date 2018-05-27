@@ -1,4 +1,4 @@
-c@kali:~/src/oscp$ cat slmail-win7ultip0c.py
+c@kali:~/src/$ cat slmail-win7ultip0c.py
 #!/usr/bin/env python
 # poc prepared for CVE-2003-0264
 # 26.05.2018
@@ -64,4 +64,4 @@ print '[+] it\'s done!'
 # o/
 #
 
-c@kali:~/src/oscp$
+c@kali:~/src/$
