@@ -1,0 +1,11 @@
+.echo ""
+.logopen /t c:\target.log
+.echo "loaded"
+g
+g
+g
+r
+.dump /u c:\target.dmp
+.echo "finished"
+.logclose
+.restart /f
