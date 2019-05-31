@@ -3,6 +3,7 @@
 #
 # 26.05.2019 @ 00:28
 # full tutorial: https://www.youtube.com/watch?v=cQWu4B6mV2Q
+# detailed tutorial: https://www.youtube.com/watch?v=A6W4AekUCGg&fbclid=IwAR1Y18GUHwtbCafbnSB0QoiGFI0WdWQ2wMGQGBK_3olEmMD1hSd4YT8zUbM
 # have fun ;]
 # 
 
