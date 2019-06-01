@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # path07: testing mongodb
-# 
+#
 # note: to use this path you'll need to:
 #    # apt-get install python-pymongo -y
-# 
+#
 # current:
 #   - preauthlist
-#  
+#   - postauthlist
 
 # --- imports ---
 import pymongo
@@ -39,8 +39,10 @@ def preauthlist():
     print BOLD + '  [+] Listing available databases:' + ENDC
     dbs = client.list_database_names()
     for db in dbs:
-      print '    -db-> %s' % ( db ) 
+      print '    -db-> %s' % ( db )
 
+  except pymongo.errors.OperationFailure:
+    print FAIL + '  [-] We need some credentials to access DB ;[\n' + ENDC
 
   except pymongo.errors.ServerSelectionTimeoutError:
     print FAIL + '  [-] We can not connect to remote DB (timeout) :Z\n' + ENDC
@@ -58,10 +60,10 @@ def postauthlist():
   target = raw_input('    set target: ')
   port = raw_input('    set port[27017]: ')
   user = raw_input('    try username: ')
-  passwd = raw_input('  try password: ')
+  passwd = raw_input('    try password: ')
 
   conn_str = 'mongodb://' + user + ':' + passwd + '@' + target + ':' + port + '/'
-  print conn_str
+  # print conn_str
 
   try:
     client = MongoClient( conn_str )
@@ -71,6 +73,8 @@ def postauthlist():
     for db in dbs:
       print '    -db-> %s' % ( db )
 
+  except pymongo.errors.OperationFailure:
+    print FAIL + '  [-] Wrong credentials :C\n' + ENDC
 
   except pymongo.errors.ServerSelectionTimeoutError:
     print FAIL + '  [-] We can not connect to remote DB (timeout) :Z\n' + ENDC
@@ -79,6 +83,3 @@ def postauthlist():
   print '' + BOLD
   print '  [+] path 7b: mongodb - postauth list - finished.' + ENDC
   print ''
-
-
-
