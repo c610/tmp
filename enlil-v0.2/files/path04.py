@@ -51,3 +51,4 @@ def tnscmds():
   print '  [+] path 4: oracle tns listener - finished.\n' + ENDC
 
 ## 
+
