@@ -58,7 +58,7 @@ def getversion():
 
 
 def getrest():
-  print OKGREEN + '  [+] path 5a: Splunk RESP API (default: 8089/tcp)' + ENDC
+  print OKGREEN + '  [+] path 5b: Splunk REST API (default: 8089/tcp)' + ENDC
   print ''
 
   # GET to IP:5601 to grab version
@@ -111,7 +111,7 @@ def getrest():
 
   #
   print '' + BOLD
-  print '  [+] path 05a: Splunk webappp - finished.\n' + ENDC
+  print '  [+] path 05b: Splunk webappp - finished.\n' + ENDC
   print ''
 
 ##
