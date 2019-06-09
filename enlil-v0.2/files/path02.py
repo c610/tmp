@@ -8,6 +8,7 @@
 # --- imports ---
 import subprocess
 import re
+import requests
 
 # --- super colours ---
 HEADER = '\033[95m'
@@ -43,7 +44,6 @@ def getversion():
   if foundver:
     print OKGREEN
     print '  [+] Kibana version: %s' % ( foundver.group(1) )
-    print '      + Vulnerable to SSRF (load_from)'
     print ENDC
 
   else:
