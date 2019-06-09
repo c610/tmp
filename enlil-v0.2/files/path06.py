@@ -48,4 +48,3 @@ def getDBs():
   print '  [+] path 06: influxdb - get DB\'s - finished.' + ENDC
   print ''
 
-
