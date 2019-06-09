@@ -15,14 +15,19 @@ import subprocess
 
 
 # --- paths/implants --- 
-import path01
-import path02
-import path03
-import path04
-import path05
-import path06
-import path07
-import path08
+import path01      # openssh enum bug
+import path02      # kibana getversion
+import path03      # testing elasticsearch
+import path04      # testing oracle tns listener
+import path05      # testing splunk
+import path06      # testing influxdb
+import path07      # testing mongodb
+import path08      # testing pcp
+import path09      # testing mysql
+import path10      # testing prometheus # (still todo)
+import path11      # testing active mq web console (8191) / stomp
+import path12      # testing vamax 8.x rce
+import path13      # testing activemq - admin panel
 
 import implants
 # ...wanna more?
@@ -114,7 +119,8 @@ def scan_target():
   prepare_env(target)
 
   # run the scan when all settings/env are ready
-  cmd = 'nmap -sV -v -n -p- -Pn --max-retries 1 --min-rate 121 -oN ' + './' + target + '/'+ target + '.log ' + target
+  cmd = 'nmap -sV -vvv -n --top-ports 15000 -Pn --max-retries 1 --min-rate 120 -oN ' + './' + target + '/' + target + '.log ' + target 
+  # cmd = 'nmap -sV -v -n -p- -Pn --max-retries 1 --min-rate 121 -oN ' + './' + target + '/'+ target + '.log ' + target
   runme = subprocess.call([ cmd ], shell=True)
 
   print '\n'
@@ -209,10 +215,10 @@ def path_target():
     elif line.find('5601/tcp') != -1:
       print '  [path 02]> kibana webapp'
 
-    elif line.find('9220/tcp') != -1:
+    elif line.find('9200/tcp') != -1:
       print '  [path 03a]> ElasticSearch at 9200 - check version'
 
-    elif line.find('9220/tcp') != -1:
+    elif line.find('9200/tcp') != -1:
       print '  [path 03b]> ElasticSearch at 9200 - preauth search'
 
     elif line.find('Oracle TNS listener') != -1:
@@ -222,11 +228,13 @@ def path_target():
     elif line.find('8000/tcp') != -1:
       if line.find('CherryPy httpd') != -1:
         print '  [path 05a] Splunk get version (default: 8000/tcp)'
+
     elif line.find('8089/tcp') != -1:
       print '  [path 05b] Splunk REST API check (default: 8089/tcp)'
 
     elif line.find('InfluxDB') != -1:
       print '  [path 06] InfluxDB - preauth get DB\'s' 
+
     elif line.find('8086/tcp') != -1:
       print '  [path 06] InfluxDB - preauth get DB\'s'
 
@@ -237,6 +245,22 @@ def path_target():
     elif line.find('44321/tcp') != -1:
       print '  [path 08] PCP found online' # run# apt-get install pcp-manager
 
+    elif line.find('MySQL') != -1:
+      if line.find('unauthorized') != -1:
+        print '  [path 09] MySQL found unauthorized'
+
+    elif line.find('Go-IPFS json-rpc or InfluxDB API') != -1:
+      if line.find('9090/tcp') != -1: # default for Prometheus
+        print '  [path 10] Go-IPFS json-rpc/InfluxDB API/Prometheus - found'
+
+    elif line.find('8161/tcp') != -1:
+      print '  [path 11] Active MQ - Web Console found' 
+
+    elif line.find('9080/tcp') != -1:
+      print '  [path 12] VA MAX (8.3.x) - possible RCE'
+
+    elif line.find('61616') != -1: # 61613-6/tcp
+      print '  [path 13] ActiveMQ STOMP found'
 
     # next...
 
@@ -258,6 +282,13 @@ def path_target():
   elif try_path == '7a' : path07.preauthlist()    # path07: preauth list available DB's
   elif try_path == '7b' : path07.postauthlist()   # path07: postauth list available DB's
   elif try_path == '8'  : path08.getstats()       # path08: pcp stats online
+  elif try_path == '9'  : path09.getdbs()     # path09: testing mysql
+  # elif try_path == '10' : path10.getinfo()        # path10: prometheus - getinfo
+  elif try_path == '11' : path11.getadminlogin()  # path11: active mq web console small bf test
+  elif try_path == '12' : path12.getrce()         # path12: vamax 8.3.x rce
+  elif try_path == '13a': path13.bf()             # admin panel bf activemq
+  elif try_path == '13b': path13.sender()         # stomp sender activemq
+
   # ...
   else:
     print FAIL + '  Don\'t play with me.\n' + ENDC
