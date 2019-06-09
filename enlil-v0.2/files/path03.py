@@ -9,6 +9,7 @@
 # --- imports ---
 import subprocess
 import requests
+import json
 
 # --- super colours ---
 HEADER = '\033[95m'
