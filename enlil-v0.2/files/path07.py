@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # path07: testing mongodb
-#
+# 
 # note: to use this path you'll need to:
 #    # apt-get install python-pymongo -y
-#
+# 
 # current:
 #   - preauthlist
-#   - postauthlist
+#   - postauthlist 
 
 # --- imports ---
 import pymongo
@@ -39,7 +39,7 @@ def preauthlist():
     print BOLD + '  [+] Listing available databases:' + ENDC
     dbs = client.list_database_names()
     for db in dbs:
-      print '    -db-> %s' % ( db )
+      print '    -db-> %s' % ( db ) 
 
   except pymongo.errors.OperationFailure:
     print FAIL + '  [-] We need some credentials to access DB ;[\n' + ENDC
@@ -83,3 +83,6 @@ def postauthlist():
   print '' + BOLD
   print '  [+] path 7b: mongodb - postauth list - finished.' + ENDC
   print ''
+
+
+
