@@ -33,7 +33,7 @@ import path10      # testing prometheus # (still todo)
 import path11      # testing active mq web console (8191) / stomp
 import path12      # testing vamax 8.x rce
 import path13      # testing activemq - admin panel
-import path14      # testing JWDP protocol
+import path14      # testing JDWP protocol
 
 import implants
 # ...wanna more?
@@ -268,10 +268,10 @@ def path_target():
     elif line.find('61616') != -1: # 61613-6/tcp
       print '  [path 13] ActiveMQ STOMP found'
 
-    elif line.find('5005') != -1: # default jwdp
-      print '  [path 14] JWDP service found open'
+    elif line.find('5005') != -1: # default jdwp
+      print '  [path 14] JDWP service found open'
     elif line.find('JWDP') != -1: # TODO: ;]
-      print '  [path 14] JWDP service found open'
+      print '  [path 14] JDWP service found open'
 
 
     # next...
