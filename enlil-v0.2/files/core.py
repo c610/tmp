@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # This Python file uses the following encoding: utf-8
 # core.py - main function(s) for our starter...
-# 
-# - 26.05.2019 @ 10:56 
-
+#
+# - 26.05.2019 @ 10:56
+#
+# detailed tutorial:
+#  https://www.youtube.com/watch?v=S1j4K_D3ZQo
+#
 
 # --- imports ---
 import sys
@@ -12,9 +15,11 @@ import datetime
 import os
 import subprocess
 #from pymongo import MongoClient
+from stomp import * # for STOMP protocol
+import stomp
 
 
-# --- paths/implants --- 
+# --- paths/implants ---
 import path01      # openssh enum bug
 import path02      # kibana getversion
 import path03      # testing elasticsearch
@@ -28,6 +33,7 @@ import path10      # testing prometheus # (still todo)
 import path11      # testing active mq web console (8191) / stomp
 import path12      # testing vamax 8.x rce
 import path13      # testing activemq - admin panel
+import path14      # testing JWDP protocol
 
 import implants
 # ...wanna more?
@@ -52,13 +58,13 @@ UNDERLINE = '\033[4m'
 def banner():
   #      *****************************************************************
   print WARNING + '\n'
-  print ' ███████╗███╗   ██╗██╗     ██╗██╗   (' + str(current_date) + ')' 
+  print ' ███████╗███╗   ██╗██╗     ██╗██╗   (' + str(current_date) + ')'
   print ' ██╔════╝████╗  ██║██║     ██║██║      '
   print ' █████╗  ██╔██╗ ██║██║     ██║██║      '
   print ' ██╔══╝  ██║╚██╗██║██║     ██║██║      '
   print ' ███████╗██║ ╚████║███████╗██║███████╗ '
   print ' ╚══════╝╚═╝  ╚═══╝╚══════╝╚═╝╚══════╝ '
-  print ENDC                              
+  print ENDC
 
 
   #print '*'*65
@@ -107,7 +113,7 @@ def menu():
     menu()
 
 
-## 
+##
 
 def scan_target():
   # run scan now, when all env is ready to future  log/s
@@ -119,14 +125,14 @@ def scan_target():
   prepare_env(target)
 
   # run the scan when all settings/env are ready
-  cmd = 'nmap -sV -vvv -n --top-ports 15000 -Pn --max-retries 1 --min-rate 120 -oN ' + './' + target + '/' + target + '.log ' + target 
+  cmd = 'nmap -sV -vvv -n --top-ports 15000 -Pn --max-retries 1 --min-rate 120 -oN ' + './' + target + '/' + target + '.log ' + target
   # cmd = 'nmap -sV -v -n -p- -Pn --max-retries 1 --min-rate 121 -oN ' + './' + target + '/'+ target + '.log ' + target
   runme = subprocess.call([ cmd ], shell=True)
 
   print '\n'
   print OKGREEN + '  [i] Scan module finished.\n' + ENDC
 
-## 
+##
 
 def prepare_env(target):
   print BOLD + '  [i] checking env for target: ' + target + ENDC
@@ -233,7 +239,7 @@ def path_target():
       print '  [path 05b] Splunk REST API check (default: 8089/tcp)'
 
     elif line.find('InfluxDB') != -1:
-      print '  [path 06] InfluxDB - preauth get DB\'s' 
+      print '  [path 06] InfluxDB - preauth get DB\'s'
 
     elif line.find('8086/tcp') != -1:
       print '  [path 06] InfluxDB - preauth get DB\'s'
@@ -254,13 +260,19 @@ def path_target():
         print '  [path 10] Go-IPFS json-rpc/InfluxDB API/Prometheus - found'
 
     elif line.find('8161/tcp') != -1:
-      print '  [path 11] Active MQ - Web Console found' 
+      print '  [path 11] Active MQ - Web Console found'
 
     elif line.find('9080/tcp') != -1:
       print '  [path 12] VA MAX (8.3.x) - possible RCE'
 
     elif line.find('61616') != -1: # 61613-6/tcp
       print '  [path 13] ActiveMQ STOMP found'
+
+    elif line.find('5005') != -1: # default jwdp
+      print '  [path 14] JWDP service found open'
+    elif line.find('JWDP') != -1: # TODO: ;]
+      print '  [path 14] JWDP service found open'
+
 
     # next...
 
@@ -274,10 +286,10 @@ def path_target():
   if try_path == '1'    : path01.enum()           # path01: ssh enum bug
   elif try_path == '2'  : path02.getversion()     # path02: kibana webapp
   elif try_path == '3a' : path03.getversion()     # path03a: elasticsearch on 9200
-  elif try_path == '3b' : path03.preauth_search() # path03b: elasticsearch preauth search 
+  elif try_path == '3b' : path03.preauth_search() # path03b: elasticsearch preauth search
   elif try_path == '4'  : path04.tnscmds()        # path04: preauth tns listener, ver, stat
   elif try_path == '5a' : path05.getversion()     # path05a: testing splunk at 8000/tcp
-  elif try_path == '5b' : path05.getrest()        # path05b: testing splunk at 8089/tcp   
+  elif try_path == '5b' : path05.getrest()        # path05b: testing splunk at 8089/tcp
   elif try_path == '6'  : path06.getDBs()         # path06: influxdb - get databases
   elif try_path == '7a' : path07.preauthlist()    # path07: preauth list available DB's
   elif try_path == '7b' : path07.postauthlist()   # path07: postauth list available DB's
@@ -288,6 +300,7 @@ def path_target():
   elif try_path == '12' : path12.getrce()         # path12: vamax 8.3.x rce
   elif try_path == '13a': path13.bf()             # admin panel bf activemq
   elif try_path == '13b': path13.sender()         # stomp sender activemq
+  elif try_path == '14' : path14.gotleak()        # path14: testing jdwp
 
   # ...
   else:
@@ -297,6 +310,4 @@ def path_target():
   print '\n'
   menu() # # goto 'main' starter: menu()
 
-## 
-
-
+##
