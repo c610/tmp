@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# path14: testing jwdp
+# path14: testing jdwp
 # 
 # detailed tutorial:
 #   https://www.youtube.com/watch?v=VNj46axj9qM
@@ -26,7 +26,7 @@ UNDERLINE = '\033[4m'
 
 
 def gotleak():
-  print OKGREEN + '  [+] path 14: get some info from unauthorized JWDP' + ENDC
+  print OKGREEN + '  [+] path 14: get some info from unauthorized JDWP' + ENDC
   print ''
   print '          based on: https://github.com/IOActive/jdwp-shellifier\n'
   # ...
@@ -76,7 +76,7 @@ def gotleak():
   ####
 
   print '' + BOLD
-  print '  [+] path 14: unauthorized JWDP check - finished.' + ENDC
+  print '  [+] path 14: unauthorized JDWP check - finished.' + ENDC
   print ''
 
 
