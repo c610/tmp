@@ -1,0 +1,107 @@
+# --------------------------------------------------------------------------------------
+# modus.py - 'modus operandi' project
+# --------------------------------------------------------------------------------------
+# based mostly on bugs described at code610.blogspot.com
+# --------------------------------------------------------------------------------------
+#
+# last updates: (v0.8)
+#
+#   31.01.2018 / 21:18 -- complete refactor, multiprocessing and thread pools
+#     due to use of python-magic an libmagic this version won't work under windows
+#     -- support for dynamic plugin load
+#     -- support select plugins dir
+#     -- csv output
+# 
+# last updates: (v0.7)
+#
+#   10.01.2018 / 12:36 -- added: piwigo.check_xss, piwigo.check_sqli_pwg_realesc
+#   10.01.2018 / 12:20 -- added: dlink.check_xss module
+#
+#   10.01.2018 / 11:12 -- added module: 
+#     -- basic_traversal (checking.py) 
+#     -- basic_unserialize (checking.py)
+#     -- check_fileinc (wordpress.py)
+#     -- check_rce (wordpress.py)
+# 
+#   10.01.2018 / 11:07 -- added modules:
+#     -- horde -- find few types of XSS (based on Horde 5.2.2x)
+#     -- wordpress -- find few XSS and SQLi bugs (based on Wordpress 4.x)
+#     -- genix -- find few basic XSS (based on GenixCMS 1.1.5)
+#     -- basic -- few sample test for XSS and SQLi
+#     -- 
+# 
+#   09.01.2018 / 10:00 -- rewrited again to v0.7 
+# 
+# last updates: (v0.5)
+#
+#   03.01.2018 / 10:59 -- modified wordpress-declar modules...
+#   02.01.2018 / 18:45 -- modified: wordpress_sqli_get* modules; breaktime;]
+#   02.01.2018 / 16:42 -- added: wordpress_sqli_get_row_declar_where
+#   02.01.2018 / 16:25 -- added: wordpress_sqli_get_results_declar_2ndParam
+#   02.01.2018 / 16:11 -- modified: added missing HTTP methods to parse
+#                      -- wordpress_sqli_declar renamed to
+#                         wordpress_sqli_get_results_declar. splited again.
+#   02.01.2018 / 14:20 -- modified wordpress_sqli_declar to properly
+#        spot sqli bug as well as verify buggy declaration in the
+#        source. TODO: prepare more checks; split checks to f()'s
+#
+#   02.01.2018 / 08:58 -- added: basic_traversal()
+#   01.01.2018 / 23:51 -- notes:TODO:wordpres_* to modify...
+#   01.01.2018 / 17:57 -- added:
+#     -- wordpress_fileinc | A
+#     -- wordpress_rce() | A
+#     -- detailed time (.now())
+#
+#   01.01.2018 / 15:43 -- added/modified:
+#     -- dlink_xss - quick test to grab some XSS (based on dir300) | A
+#     -- piwigo_xss - find XSS bugs in Piwigo code (based on 2.9.2) | A
+#     -- piwigo_sqli - to check for sqli bugs (based on 2.9.2) | A
+#     -- genix_sqli - check for sqli bugs in genix (1.1.5) | A
+#     -- genix_xss - find XSS bugs (based on genix1.1.5) | A
+#     -- horde_xss_setget -- XSS when set/get is not sanitized | A
+#     -- horde_xss_setdef - based on CVE-2017-1690[6-8] | A
+#     -- wordpress_sqli - to find more WPplugin bugs... | A
+#     -- wordpress_sqli_declar - to find WP plugin bugs (4.x) | A
+#     -- basic_xss - to find XSS bugs (methods) | M
+#     -- basic_fileinc_declar - include bugs with declaration(s) | M
+
+#   01.01.2018 / 15:23 -- some small changes in function below; still TODO
+#   01.01.2018 / 11:40 -- few modification of base_fileinc_declar; TODO
+#   01.01.2018 / 11:06 -- continue...
+#   29.12.2017 / 12:55 -- rewrited: basic_xss(_declar), basic_fileinc
+#   29.12.2017 / 09:03 -- new idea for modus skeleton (v0.5)
+#   28.12.2017 / 10:40 -- edited wordpress modules
+#   28.12.2017 / 07:54 -- added: basic path/dir traversal check
+#   27.12.2017 / 13:32 -- added: basic file include check
+#   27.12.2017 / 13:13 -- added: basic unserialize check
+#   26.12.2017 / 20:35 -- retesting zabbix (3.4.4) module
+#   24.12.2017 / 08:47 -- added: wordpress_sqli_declar draft
+#   24.12.2017 / 01:02 -- added: wordpress_sqli module draft
+#   24.12.2017 / 00:40 -- few modification of basix_xss*-module(s)
+#   23.12.2017 / 17:31 -- added: basic_sqli, basic_xss updated
+#   23.12.2017 / 13:01 -- added: horde_xss_setget, basic_xss
+#                           basic_xss_declar
+#   23.12.2017 / 12:01 -- first stages ready (v0.4)
+#   23.12.2017 / 11:06 -- rewriting the whole code again to v0.4
+#   22.12.2017 / 10:22 -- preparing tests for new zabbix(3.4.4)
+#   21.12.2017 / 17:08 -- checking dlink's bug modified
+#   20.12.2017 / 15:31 -- few updates to verify bugs in dlink's
+#   12.12.2017 / 09:29 -- recheck to verify horde bugs;
+#              / 12:04 -- 2 new sqli bugs in Horde5.2.x found
+#              / 17:54 -- reediting xss_piwigo
+#   11.12.2017 / 19:04 -- 'the easiest solution is in the Code' - enlil
+#   10.12.2017 / 12:08 -- updated sqli_piwigo module
+#   10.12.2017 / 07:46 -- updating new modules
+#   09.12.2017 / 11:42 -- modified to v0.3
+#   08.12.2017 / 15:00 -- added: more test to sqli @piwigo
+#                      -- added: tests for xss @piwigo
+#   06.12.2017 / 18:59 -- testing horde with current modules
+#   05.12.2017 / 00:08 -- rewriting the whole code to v0.2
+#   30.11.2017 / 23:57 -- see: readme.txt
+#   26.11.2017 / 20:11 -- rewrited few lines...
+#
+
+# more:
+# code610.blogspot.com
+# 
+

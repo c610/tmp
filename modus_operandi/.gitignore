@@ -1,0 +1,6 @@
+*.pyc
+.idea
+modus/bin/
+modus/include/
+modus/lib/
+modus/lib64
